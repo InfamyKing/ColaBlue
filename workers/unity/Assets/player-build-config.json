@@ -1,4 +1,9 @@
 {
+  "Global": {
+    "Plugin": {
+      "UsePlatformDirectories": true
+    }
+  },
   "Deploy": {
     "FSim": {
       "Targets": [
