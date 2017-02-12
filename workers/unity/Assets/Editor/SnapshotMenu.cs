@@ -1,42 +1,41 @@
-using System;
-using UnityEditor;
+﻿using System.Collections.Generic;
+using System.IO;
+using Assets.EntityTemplates;
+using Improbable;
+using Improbable.Worker;
 using UnityEngine;
+using JetBrains.Annotations;
+using UnityEditor;
 
-namespace Assets.Editor
+public class SnapshotMenu : MonoBehaviour
 {
-    [InitializeOnLoad]
-    public static class SnapshotMenu
+    private static readonly string InitialWorldSnapshotPath = Application.dataPath +
+                                                              "/../../../snapshots/initial_world.snapshot";
+
+    [MenuItem("Improbable/Snapshots/Generate Snapshot Programmatically")]
+    [UsedImplicitly]
+    private static void GenerateSnapshotProgrammatically()
     {
-        private static Action improbableBuild;
+        var snapshotEntities = new Dictionary<EntityId, SnapshotEntity>();
+        var currentEntityId = 0;
 
-        static SnapshotMenu()
+        snapshotEntities.Add(new EntityId(currentEntityId++), PlayerSpawnerEntityTemplate.GeneratePlayerSpawnerSnapshotEntityTemplate());
+
+        SaveSnapshot(snapshotEntities);
+    }
+
+    private static void SaveSnapshot(IDictionary<EntityId, SnapshotEntity> snapshotEntities)
+    {
+        File.Delete(InitialWorldSnapshotPath);
+        var maybeError = Snapshot.Save(InitialWorldSnapshotPath, snapshotEntities);
+
+        if (maybeError.HasValue)
         {
-            improbableBuild = Improbable.Unity.EditorTools.Build.SimpleBuildSystem.BuildAction;
-            Improbable.Unity.EditorTools.Build.SimpleBuildSystem.BuildAction = InjectBuild;
+            Debug.LogErrorFormat("Failed to generate initial world snapshot: {0}", maybeError.Value);
         }
-
-        [MenuItem("Improbable/Snapshots/Generate Default Snapshot %#&w")]
-        private static void GenerateSnapshotDefault()
+        else
         {
-            var path = Application.dataPath + "/../../../snapshots/";
-            var snapshot = new SnapshotBuilder("default.snapshot", path);
-            SnapshotDefault.Build(snapshot);
-            snapshot.SaveSnapshot();
-        }
-
-        [MenuItem("Improbable/Snapshots/Generate Benchmark Snapshot")]
-        private static void GenerateSnapshotBenchmark()
-        {
-            var path = Application.dataPath + "/../../../snapshots/";
-            var snapshot = new SnapshotBuilder("benchmark.snapshot", path);
-            SnapshotBenchmark.Build(snapshot);
-            snapshot.SaveSnapshot();
-        }
-
-        private static void InjectBuild()
-        {
-            improbableBuild();
-            GenerateSnapshotDefault();
+            Debug.LogFormat("Successfully generated initial world snapshot at {0}", InitialWorldSnapshotPath);
         }
     }
 }

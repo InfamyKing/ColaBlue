@@ -1,6 +1,14 @@
 package improbable.player;
 
 component PlayerControls {
-  id = 1200;
-  Coordinates target_position = 1;
+    // Schema file ID, unique within the project
+    id = 1005;
+
+    // Exclude this component from spatial finds
+    option queryable = false;
+
+    // The speed at which the ship wants to move at
+    float target_speed = 1;
+    // The direction the ship wants to be steering in
+    float target_rotation = 2;
 }

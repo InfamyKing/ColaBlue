@@ -11,16 +11,13 @@
     },
     "entity_interest": {
       "range_entity_interest": {
-        "radius": 2
+        "radius": 200
       }
     },
     "streaming_query": [],
     "component_delivery": {
       "default": "RELIABLE_ORDERED",
       "checkout_all_initially": true
-    },
-    "asset_context": {
-      "use_player_context_if_authoritative": false
     }
   },
   "managed": {
@@ -111,7 +108,6 @@
   },
   "external": {
     "default": {
-      "run_type": "EXECUTABLE",
       "windows": {
         "command": "build/worker/UnityFSim@Windows/UnityFSim@Windows.exe",
         "arguments": [

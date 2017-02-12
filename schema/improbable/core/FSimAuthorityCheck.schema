@@ -1,5 +1,0 @@
-package improbable.core;
-
-component FSimAuthorityCheck {
-  id = 1001;
-}
